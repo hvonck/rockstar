@@ -1,12 +1,21 @@
-# Getting to Rock
+# Getting ready to Rock
 
-To be able to rock, some sort of program needs to be able to parse the lyrics, create instructions and later execute those instructions.
+Let's be real, I will never be able to become a real rockstar. For that you need musical talent, which I do not fully posses.
+I am however quite alright at writing code. So I thought why not give the second best thing, the rockstar language a try. I might be able to earn myself a sticker in the process.
 
-I've been trying to make such a program for the rockstar language in C++. It is the firs time that I have ever done anything like this, so it's not as functional, nor pretty as I want it to be, but it is a lot of fun to make.
+But, to be able to rock, some sort of program needs to be written which is able to parse the lyrics, create instructions and later execute those instructions.
 
+Since my expertise is in C++ (not in JavaScript) and I felt like challenging myself, I've been trying to make such a program using C++. 
+This is the first time that I have ever done anything like this, so might not be pretty, nor optimal, but it is functional and it is a lot of fun to make.
 
-Currently quite a few things are supported.
+## Well, what's working?
 
+Well, currently only the base requirements of the language are implemented. Full spec of what is implemented later.
+Functions, if statements, loops and comparisons are currently not supported. I still need to find a way to nicely implement them.
+
+Also, the program is currently memory leak city. Don't worry about it. It will be fixed (eventually).
+
+## Supported features
 You're able to dynamically create variables of different types: `Null, Boolean, Number and String`.
 If a variable has not been initialized yet, it will always be of type `Mysterious`.
 
@@ -24,9 +33,12 @@ For instance `x / y + z * w` will be executed as `x / y = t1; z * w = t2; t1 + t
 The fancy numbering system is also implemented. So, as in the example, this will result in PI.
 `This is ice. A life unfulfilled; wakin' everybody up, taking booze and pills`
 
+And some other things that I probably forgot to mention. Check out the example down below, which should use all things currently implemented.
+
 
 ## What?? Generated Song and Artist names?
 Whenever you 'compose' a 'song' (compile a script) a pseudo random song name and artist name will be generated using 100 popular songs and artist from the 1980s. The seed for the generation is based on the length of the file, excluding `\n` characters.
+This should be a good boost for morale.
 
 ## The example:
 The example that is provided with the source code is this:
@@ -65,6 +77,18 @@ a break
 testing cin with a string
 press enter to continue....
 ```
+
+## How to use the C++ side of things.
+A funny thing of the C++ side is that in order to execute a rockstar script, you need to create an instance of what is referred to as a `Composer`.
+
+When you call the `compose` function on the `Composer` with your desired lyrics, it will create a `Song` for you.
+The `Song` is basically the compiled script. You can then call the `play` function on the `Song` to execute the script.
+
+If you want to run the code yourself and see what it does, you can clone/download this repository and build the project using CMake.
+
+
+
+
 
 
 
