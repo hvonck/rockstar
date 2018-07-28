@@ -32,7 +32,7 @@ T* rockConstruct()
 template<typename T>
 void rockDestruct(const T* t)
 {
-  operator delete(t);
-  defRockFree(t);
+  delete(t);
+  rockFree((void*)t);
 }
 #endif

@@ -43,13 +43,13 @@ namespace lambda
   {
   public:
     void setName(const String& name) { name_ = name; }
-    void construct(const String& name, MysteriousType* data) { name_ = name; data_ = (IType*)data; type_ = Types::kMysterious; }
-    void construct(const String& name, NullType* data)       { name_ = name; data_ = (IType*)data; type_ = Types::kNull;       }
-    void construct(const String& name, BoolType* data)       { name_ = name; data_ = (IType*)data; type_ = Types::kBool;       }
-    void construct(const String& name, NumberType* data)     { name_ = name; data_ = (IType*)data; type_ = Types::kNumber;     }
-    void construct(const String& name, StringType* data)     { name_ = name; data_ = (IType*)data; type_ = Types::kString;     }
-    void construct(const String& name, ObjectType* data)     { name_ = name; data_ = (IType*)data; type_ = Types::kObject;     }
-    void construct(const String& name, FunctionType* data)   { name_ = name; data_ = (IType*)data; type_ = Types::kFunction;   }
+    void construct(MysteriousType* data) { data_ = (IType*)data; type_ = Types::kMysterious; }
+    void construct(NullType* data)       { data_ = (IType*)data; type_ = Types::kNull;       }
+    void construct(BoolType* data)       { data_ = (IType*)data; type_ = Types::kBool;       }
+    void construct(NumberType* data)     { data_ = (IType*)data; type_ = Types::kNumber;     }
+    void construct(StringType* data)     { data_ = (IType*)data; type_ = Types::kString;     }
+    void construct(ObjectType* data)     { data_ = (IType*)data; type_ = Types::kObject;     }
+    void construct(FunctionType* data)   { data_ = (IType*)data; type_ = Types::kFunction;   }
     String          getName()      const { return name_;                  }
     Types           getType()      const { return type_;                  }
     MysteriousType* asMysterious() const { return (MysteriousType*)data_; }
@@ -125,7 +125,7 @@ namespace lambda
   {
   public:
     void* get() const { return function_; }
-    void set(void* function) { function_ = function_; }
+    void set(void* takes) { function_ = function_; }
 
   private:
     void* function_ = nullptr;

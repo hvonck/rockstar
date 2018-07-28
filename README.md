@@ -10,46 +10,39 @@ This is the first time that I have ever done anything like this, so might not be
 
 ## Well, what's working?
 
-Well, currently only the base requirements of the language are implemented. Full spec of what is implemented later.
-Functions, if statements, loops and comparisons are currently not supported. I still need to find a way to nicely implement them.
+Basically everything is working. From poetic literal assignment to calling and creating functions. Almost the full spec of the Rockstar language is implemented.
+
+I have put indicators next to all features to specify whether it is implemented or not.
 
 Also, the program is currently memory leak city. Don't worry about it. It will be fixed (eventually).
-
-## Supported features
-You're able to dynamically create variables of different types: `Null, Boolean, Number and String`.
-If a variable has not been initialized yet, it will always be of type `Mysterious`.
-
-You can increment and decrement a Number variable using the `Build {variable} up` and `Knock {variable} down` keywords.
-
-You can assign a value to a variable using `put {value} into {variable}` and `{variable} is {value}`.
-
-You can output the value of a variable using the `say {variable}` syntax.
-
-And you can read in a variable using the `listen to {variable}` syntax.
-
-The basic arithmetic that the language supports is also already supported, and it also automatically orders the operations correctly if you try to chain multiple operations together.
-For instance `x / y + z * w` will be executed as `x / y = t1; z * w = t2; t1 + t2 = t3` where t3 is the final result.
-
-The fancy numbering system is also implemented. So, as in the example, this will result in PI.
-`This is ice. A life unfulfilled; wakin' everybody up, taking booze and pills`
-
-And some other things that I probably forgot to mention. Check out the example down below, which should use all things currently implemented.
-
 
 ## What?? Generated Song and Artist names?
 Whenever you 'compose' a 'song' (compile a script) a pseudo random song name and artist name will be generated using 100 popular songs and artist from the 1980s. The seed for the generation is based on the length of the file, excluding `\n` characters.
 This should be a good boost for morale.
 
-## The example:
-The example that is provided with the source code is this:
-It goes over all of the different types of operations that you can currently do with my implementation of rockstar.
+## The examples:
+
+This is the example that I have been using to test if all the different features work.
+
 ```
+put a lot into timmy
+tommy is nothing
+
+while tommy is as weak as timmy
+build tommy up
+if tommy is not timmy
+say tommy
+
+else if tommy is timmy
+shout "they are equal!"
+
+
 put all the things that I desire. I want and I require. into the raging fire  (create a variable, and assign a number to it generated from a string)
 my last hope is the raging fire                                               (create a variable, and store a previously created variable into it)
 build my hope up                                                              (increment a number variable)
 knock my hope down                                                            (decrement a number variable)
 trust is what's required. No matter when, no matter how.                      (create a variabbe, and store a number to it generated from a string, like in the first line)
-a soothing sound is nothing over trust with my hope of nobody                 (arithmetic using proper ordering. it says a/b+c*d which will be executed as a/b=t1, c*d=t2, t1+t2=t3)
+a soothing sound is my last hope over trust with my hope of nobody            (arithmetic using proper ordering. it says a/b+c*d which will be executed as a/b=t1, c*d=t2, t1+t2=t3)
 put lies into these thoughts                                                  (assigning a boolean to a newly created variable)
 what's required is "a break"                                                  (assigning a string to a newly created variable)
 whisper my last hope                                                          (this will output one of the values so you can see the proper result, number)
@@ -59,24 +52,108 @@ say what's required                                                           (t
 listen to these words                                                         (read a line of input. Will be evaluated the same way that put and is evaluate their variables. Without the possibility of maths operators or variables since it is done at 'runtime', not 'compile time')
 say these words                                                               (this will output the variable that got created in the previous line)
 (please ignore these next few lines. It's just to keep the window from closing.)
-enter is "press enter to continue...."
+enter is "press enter to continue..."
 say enter
 listen to temporary variables
 ```
 
 And the output respectfully is:
-```
-playing:        Fight the Prayer
-by:             Ratt Fixx
 
+```
+playing:        Too Girl
+by:             Prince
+
+1.000000
+2.000000
+3.000000
+4.000000
+5.000000
+6.000000
+7.000000
+8.000000
+9.000000
+10.000000
+11.000000
+12.000000
+they are equal!
+14.000000
 336416.125000
-0.000000
+5773.970215
 false
 a break
-"testing cin with a string"
-testing cin with a string
-press enter to continue....
+crawling in my c(k)in
+8224.000000
+press enter to continue...
 ```
+
+The FizzBuzz example as shown here works completely.
+
+```
+(FizzBuzz example)
+Midnight takes your heart and your soul
+While your heart is as high as your soul
+Put your heart without your soul into your heart
+
+Give back your heart
+
+
+Desire is a lovestruck ladykiller
+My world is nothing 
+Fire is ice
+Hate is water
+Until my world is Desire,
+Build my world up
+If Midnight taking my world, Fire is nothing and Midnight taking my world, Hate is nothing
+Shout "FizzBuzz!"
+Take it to the top
+
+If Midnight taking my world, Fire is nothing
+Shout "Fizz!"
+Take it to the top
+
+If Midnight taking my world, Hate is nothing
+Say "Buzz!"
+Take it to the top
+
+Whisper my world
+```
+
+And the (shortened) output respectfully is:
+
+```
+playing:        White Amadeus
+by:             Bananarama Richie
+
+1.000000
+2.000000
+Fizz!
+3.000000
+4.000000
+Buzz!
+5.000000
+Fizz!
+...
+FizzBuzz!
+Fizz!
+Buzz!
+90.000000
+91.000000
+92.000000
+Fizz!
+93.000000
+94.000000
+Buzz!
+95.000000
+Fizz!
+96.000000
+97.000000
+98.000000
+Fizz!
+99.000000
+Buzz!
+100.000000
+```
+
 
 ## How to use the C++ side of things.
 A funny thing of the C++ side is that in order to execute a rockstar script, you need to create an instance of what is referred to as a `Composer`.
@@ -130,15 +207,18 @@ Tommy was a lean mean wrecking machine.  (initialises Tommy with the value 14487
 
 There's two ways to declare and use variables in Rockstar. 
 
-**Common variables** consist of one of the keywords `a`, `an`, `the`, `my` or `your` followed by a unique variable name, which must contain only lowercase ASCII letters a-z. 
+**Common variables :x:** consist of one of the keywords `a`, `an`, `the`, `my` or `your` followed by a unique variable name, which must contain only lowercase ASCII letters a-z. 
 
-**Proper variables** are proper nouns - any word that isn't a reserved keyword and starts with an uppercase letter. Proper variable names can contain spaces as long as each space is followed by an uppercase letter. Whilst some developers may use this feature to create variables with names like `Customer ID`, `Tax Rate` or `Distance In KM`, we recommend you favour idiomatic variable names such as `Tommy`, `Gina`, `Doctor Feelgood`, `Mister Crowley`, `Kayleigh`, `Tom Sawyer`, `Billie Jean` and `Janie`. 
+**Proper variables :part_alternation_mark:** Note: This is completely working. It is currently however not limited to just camel case names.
+
+are proper nouns - any word that isn't a reserved keyword and starts with an uppercase letter. Proper variable names can contain spaces as long as each space is followed by an uppercase letter. Whilst some developers may use this feature to create variables with names like `Customer ID`, `Tax Rate` or `Distance In KM`, we recommend you favour idiomatic variable names such as `Tommy`, `Gina`, `Doctor Feelgood`, `Mister Crowley`, `Kayleigh`, `Tom Sawyer`, `Billie Jean` and `Janie`. 
 
 (Although not strictly idiomatic, `Eleanor Rigby`, `Peggy Sue`, `Black Betty`, `Layla` and `Johnny B Goode` would also all be valid variable names in Rockstar.)
 
 As in Ruby, Python and VBScript, variables are dynamically typed and you don't need to declare variables before use.
 
-**Pronouns**
+
+**Pronouns":x:**
 
 The keywords `it`, `he`, `she`, `him`, `her`, `them`, `they` always refer to the most recently named variable, determined at parse time. 
 
@@ -147,30 +227,30 @@ Note: I haven't implemented objects yet.
 
 Rockstar uses a very similar type system to that defined by the [ECMAScript type system](http://www.ecma-international.org/ecma-262/5.1/#sec-8), except `undefined` doesn't sound very rock'n'roll so we use `mysterious` instead.
 
-* **Mysterious** - the value of any variable that hasn't been assigned a value, denoted by the keyword `mysterious`
-* **Null** - the null type. Evaluates as equal to zero and equal to false. The keywords `nothing`, `nowhere` and `nobody` are defined as aliases for `null`
-* **Boolean** - a logical entity having two values `true` and `false`. *(The keywords `maybe` and `definitely maybe` are reserved for future use)*
+* **:heavy_check_mark: Mysterious** - the value of any variable that hasn't been assigned a value, denoted by the keyword `mysterious`
+* **:heavy_check_mark: Null** - the null type. Evaluates as equal to zero and equal to false. The keywords `nothing`, `nowhere` and `nobody` are defined as aliases for `null`
+* **:heavy_check_mark: Boolean** - a logical entity having two values `true` and `false`. *(The keywords `maybe` and `definitely maybe` are reserved for future use)*
  * `right`, `yes` and `ok` are valid aliases for `true`
  * `wrong`, `no` and `lies` are valid aliases for `false`
-* **Number** - Numbers in Rockstar are stored using the [DEC64](http://www.dec64.com/) numeric type.
-* **String** - Rockstar strings are sequences of 16-bit unsigned integer values representing UTF-16 code units.
-* **Object** - a collection of named data properties, as in ECMAScript.
+* **:heavy_check_mark: Number** - Numbers in Rockstar are stored using the [DEC64](http://www.dec64.com/) numeric type.
+* **:heavy_check_mark: String** - Rockstar strings are sequences of 16-bit unsigned integer values representing UTF-16 code units.
+* **:x: Object** - a collection of named data properties, as in ECMAScript.
 		
 
 ### Literals and Assignment :heavy_check_mark:
 
-String literals in Rockstar use double quotes. 
+:heavy_check_mark: String literals in Rockstar use double quotes.
 
 * `"Hello World"`
 
 The single quote character in Rockstar is treated as a letter of the alphabet. This seems unusual until you remember that `I ain't talkin' 'bout love` is a perfectly valid rock'n'roll sentence. 
 
-Numeric literals in Rockstar are written as decimal numbers
+:heavy_check_mark: Numeric literals in Rockstar are written as decimal numbers
 
 * `123`
 * `3.141592654`
 
-Assignment is denoted by the `put/into` keyword combination:
+:heavy_check_mark: Assignment is denoted by the `put/into` keyword combination:
 
 * `Put 123 into X` will assign the value `123` to the variable `X`
 * `Put "Hello World" into the message` will assign the value `"Hello World"` to the variable `the message`
@@ -214,7 +294,7 @@ For the keywords `true`, `false`, `nothing`, `nobody` and `nowhere`, a poetic as
 * `My heart is true` - initialises the variable `my heart` with the Boolean value `true` 
 * `Tommy is nobody` - initialises the variable `Tommy` with the value `null` using the `nobody` alias
 
-##### Poetic String Literals  :x:
+##### Poetic String Literals  :heavy_check_mark:
 
 A poetic string literal assignment starts with a variable name, followed by one of the keywords `says` followed by a single space. The rest of the line up to the `\n` terminator is treated as an unquoted string literal.
 
@@ -231,7 +311,7 @@ A poetic number literal begins with a variable name, followed by the keyword `is
 * `My dreams were ice. A life unfulfilled; wakin' everybody up, taking booze and pills` - initialises `my dreams` with the value `3.1415926535`
  * Note that poetic literals **can** include reserved keywords, as with `taking` in this example.
 
-### Comparison :x:
+### Comparison :heavy_check_mark:
 
 Similar to the single-equals operator in Visual Basic and some scripting languages, the `is` keyword in Rockstar is interepreted differently depending whether it appears as part of a statement or as part of an expression.
 
@@ -240,9 +320,9 @@ Comparison in Rockstar can only be done within an expression.
 * `Tommy is nobody` initialises the variable `Tommy` with the value `nobody`
 * `If Tommy is nobody` - will execute the following block if, and only if, the variable `Tommy` is equal to `nobody`
 
-The modifier `not`  will invert the meaning of the comparison, similar to `IS NULL / IS NOT NULL` in SQL. The keyword `ain't` is an alias for `is not`. This usage runs contrary to idiomatic English, where "Tommy isn't anybody", "Tommy ain't nobody" and "Tommy ain't not nobody" somehow mean exactly the same thing.
+:heavy_check_mark: The modifier `not`  will invert the meaning of the comparison, similar to `IS NULL / IS NOT NULL` in SQL. The keyword `ain't` is an alias for `is not`. This usage runs contrary to idiomatic English, where "Tommy isn't anybody", "Tommy ain't nobody" and "Tommy ain't not nobody" somehow mean exactly the same thing.
 
-Rockstar also supports the following comparison syntax:
+:heavy_check_mark: Rockstar also supports the following comparison syntax:
 
 * `is higher/greater/bigger/stronger than` to denote 'greater than'
 * `is lower/less/smaller/weaker than` to denote 'less than'
@@ -251,11 +331,11 @@ Rockstar also supports the following comparison syntax:
 
 ### Input/Output :heavy_check_mark:
 
-Use the `Listen` keyword to read one line of input from `STDIN`. Use `Listen to` to capture the input into a named variable.
+:heavy_check_mark: Use the `Listen` keyword to read one line of input from `STDIN`. Use `Listen to` to capture the input into a named variable.
 
 * `Listen to your heart` - read one line of input from `STDIN` and store it in `your heart`
 
-Use the `Say` keyword to write the value of a variable to `SDTOUT`.
+:heavy_check_mark: Use the `Say` keyword to write the value of a variable to `SDTOUT`.
 
 * `Say Tommy` - will output the value stored in `Tommy` to `STDOUT`
  
@@ -263,11 +343,11 @@ Rockstar defines `Shout`, `Whisper` and `Scream` as aliases for `Say`
  
 ### Flow Control and Block Syntax
 
-#### Conditionals :x:
+#### Conditionals :heavy_check_mark:
 
 Conditional expressions start with the `If` keyword, followed by an expression. If the expression evaluates to `true`, then the subsequent code block is executed. Optionally, an `Else` block can be written after an `If` block. The code block following the `Else` keyword would be executed if the `If` expression evaluated to `false`.
 
-#### Loops :x:
+#### Loops :heavy_check_mark:
 
 Similar to the `If` statement, a loop is denoted by the `While` or `Until` keyword, which will cause the subsequent code block to be executed repeatedly whilst the expression is satisfied:
 
@@ -280,9 +360,9 @@ Knock Tommy down
 That'll initialize Tommy with the value 16 (using the poetic number literal syntax) and then loop, decrementing Tommy by 1 each time until Tommy equals zero (i.e `ain't nothing` returns false).
 
 
-The `break` and `continue` statements work as they do in most block-based languages. Rockstar defines `Break it down` as an alias for `break` and `Take it to the top` as an alias for `continue` 
+:x: The `break` and `continue` statements work as they do in most block-based languages. Rockstar defines `Break it down` as an alias for `break` and `Take it to the top` as an alias for `continue` 
 
-#### Blocks :x:
+#### Blocks :heavy_check_mark:
 
 A block in Rockstar starts with an `If`, `Else`, `While` or `Until` statement, and is terminated by a blank line or the end-of-file. EOF ends all open code blocks
 
@@ -294,7 +374,7 @@ Knock it down
 
 ```
 
-### Functions :x:
+### Functions :heavy_check_mark:
 
 Functions are declared with a variable name followed by the `takes` keyword and a list of argument separated by the `and` keyword. 
 

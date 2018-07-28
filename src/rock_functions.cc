@@ -51,6 +51,32 @@ namespace lambda
     }
     return false;
   }
+  bool rockEqual(const char& lhs, const char& rhs)
+  {
+    return lhs == rhs;
+  }
+  bool rockEqual(const char& lhs, const Vector<char>& rhs)
+  {
+    for (const char& ch : rhs)
+    {
+      if (rockEqual(lhs, ch))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+  bool rockEqual(const Vector<char>& lhs, const Vector<char>& rhs)
+  {
+    for (const char& ch : lhs)
+    {
+      if (rockEqual(ch, rhs))
+      {
+        return true;
+      }
+    }
+    return false;
+  }
   bool rockEqual(const String& lhs, const String& rhs)
   {
     if (lhs.size() != rhs.size())
@@ -93,13 +119,43 @@ namespace lambda
     String to;
     while (std::getline(ss, to, delim))
     {
-      if (to.empty() == false)
-      {
-        lines.push_back(to);
-      }
+      lines.push_back(to);
     }
 
     return std::move(lines);
+  }
+  Vector<String> rockSplit(const Vector<String>& line, const String& delim)
+  {
+    Vector<String> segments;
+    String segment;
+
+    for (const String& word : line)
+    {
+      if (rockEqual(word, delim))
+      {
+        if (false == segment.empty())
+        {
+          segments.push_back(segment);
+          segment.clear();
+        }
+      }
+      else
+      {
+        if (false == segment.empty())
+        {
+          segment += " " + word;
+        }
+        else
+        {
+          segment += word;
+        }
+      }
+    }
+    if (false == segment.empty())
+    {
+      segments.push_back(segment);
+    }
+    return segments;
   }
   String rockToString(const Vector<String>& line, const size_t& start, const size_t& end)
   {
@@ -108,8 +164,40 @@ namespace lambda
     {
       ret += line.at(i) + " ";
     }
-    ret.pop_back();
+    if (false == ret.empty())
+    {
+      ret.pop_back();
+    }
     return ret;
+  }
+  String rockToString(size_t t)
+  {
+    // Not quick, but works with both the standard library and eastl.
+    if (t == 0u)
+    {
+      return "0";
+    }
+
+    String str;
+
+    while (t > 0u)
+    {
+      str += (t % 10) + '0';
+      t /= 10;
+    }
+
+    std::reverse(str.begin(), str.end());
+
+    return str;
+  }
+  String rockToLower(const String& word)
+  {
+    String str = word;
+    for (char& ch : str)
+    {
+      ch = tolower(ch);
+    }
+    return str;
   }
   float rockStringToNumber(const String& line)
   {

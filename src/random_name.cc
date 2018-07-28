@@ -107,7 +107,8 @@ namespace lambda
       "The",
       "Bobby",
       "Wang",
-      "Loverboy"
+      "Loverboy",
+      "David"
     };
     Vector<String> second_name = {
       "Jovi",
@@ -135,12 +136,12 @@ namespace lambda
       "Lauper",
       "",
       "Go-Go's",
-      "N' Roses",
+      "Roses",
       "",
       "",
       "Heads",
       "Benatar",
-      "David Bowie",
+      "Bowie",
       "Ranger",
       "Cell",
       "",
@@ -191,7 +192,8 @@ namespace lambda
       "",
       "League",
       "Base",
-      "E-Z", "Rock",
+      "E-Z",
+      "Rock",
       "",
       "",
       "",
@@ -430,7 +432,7 @@ namespace lambda
     };
 
     std::mt19937 mt((unsigned int)hash);
-    std::uniform_int_distribution<int> dist(0, 100);
+    std::uniform_int_distribution<int> dist(0, 99);
     String first  = first_name.at(dist(mt));
     String second = second_name.at(dist(mt));
 

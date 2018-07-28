@@ -37,8 +37,8 @@ namespace lambda
         {
         case OpData::kAdd:      weight = (count - idx) + 0u;   break;
         case OpData::kSubtract: weight = (count - idx) + 0u;   break;
-        case OpData::kMultiply: weight = (count - idx) + 100u; break;
-        case OpData::kDivide:   weight = (count - idx) + 100u; break;
+        case OpData::kMultiply: weight = (count - idx) + count; break;
+        case OpData::kDivide:   weight = (count - idx) + count; break;
         }
       }
       bool operator<(const OpWeight& other) const
@@ -56,43 +56,59 @@ namespace lambda
 
   private:
     Vector<String> lineToWords(const String& line);
-    void lineToActions(Vector<ActionContainer>& actions, const String& line);
+    void lineToActions(const String& line);
 
-    void increment(Vector<ActionContainer>& actions, const Vector<String>& line);
-    void decrement(Vector<ActionContainer>& actions, const Vector<String>& line);
-    void assign(Vector<ActionContainer>& actions, const String& name, const String& value);
-    void put(Vector<ActionContainer>& actions, const Vector<String>& line);
-    void is(Vector<ActionContainer>& actions, const Vector<String>& line);
+    void ifStatement(Couplette* couplette, const Vector<String>& line);
+    void ifStatement(const Vector<String>& line);
+    void elseStatement(const Vector<String>& line);
+    void whileStatement(const Vector<String>& line);
+    void untilStatement(const Vector<String>& line);
+
+    void takes(const Vector<String>& line);
+    void taking(const Vector<String>& line);
+    void giveBack(const Vector<String>& line);
+
+    void increment(Couplette* couplette, const Vector<String>& line);
+    void decrement(Couplette* couplette, const Vector<String>& line);
+    void assign(Couplette* couplette, const String& name, const String& value);
+    void assign(Couplette* couplette, TypeContainer* type, const String& value);
+    void put(Couplette* couplette, const Vector<String>& line);
+    void says(Couplette* couplette, const Vector<String>& line);
+    void is(Couplette* couplette, const Vector<String>& line);
     
-    void cout(Vector<ActionContainer>& actions, const Vector<String>& line);
-    void cin(Vector<ActionContainer>& actions, const Vector<String>& line);
+    void cout(Couplette* couplette, const Vector<String>& line);
+    void cin(Couplette* couplette, const Vector<String>& line);
   
     void getOperators(const Vector<String>& line, Vector<OpData>& operators);
     void weightOperators(const Vector<OpData>& operators, Vector<OpWeight>& weights);
     bool hasOpLeft(const Vector<OpData>& operators, const size_t& idx);
     bool hasOpRight(const Vector<OpData>& operators, const size_t& idx);
-    void createQueue(const Vector<OpData>& operators, const Vector<OpWeight>& weights, Vector<ActionContainer>& actions);
-    void arithmetic(Vector<ActionContainer>& actions, const Vector<String>& line);
+    void createQueue(const Vector<OpData>& operators, const Vector<OpWeight>& weights, Couplette* couplette);
+    void arithmetic(Couplette* couplette, const Vector<String>& line);
 
   private:
     
-    bool           hasType(const String& name) const;
-    TypeContainer* getType(const String& name);
-    TypeContainer* newTemporary();
-    TypeContainer* lastTemporary();
-    TypeContainer* getTemporary(size_t idx);
+    bool           hasType(Couplette* couplette, const String& name) const;
+    TypeContainer* getType(Couplette* couplette, const String& name);
+    TypeContainer* newTemporary(Couplette* couplette);
+    TypeContainer* lastTemporary(Couplette* couplette);
+    TypeContainer* getTemporary(Couplette* couplette, size_t idx);
 
-    TypeContainer* subExecute(Vector<ActionContainer>& actions, const String& value);
+    TypeContainer* subExecute(Couplette* couplette, const String& value);
+
+    Couplette*       findCouplette(Couplette* couplette, const String& name);
+    Couplette*       getRoot();
+    Couplette*       newCouplette(const String& name);
+    ActionContainer* newAction(Couplette* couplette);
+    void             createDefaultVariables(Couplette* couplette);
 
   private:
     String generateArtistName(const size_t& hash) const;
     String generateSongName(const size_t& hash) const;
 
   private:
-    Vector<String> last_rhs_;
     size_t temporary_variables_ = 0u;
-    Vector<TypeContainer*>  variables_;
-    Vector<ActionContainer> actions_;
+    Couplette* current_couplette_ = nullptr;
     Vector<String> pronouns_; // For most recently refered variable. TODO (Hilze): Implement.
     Vector<String> null_;
     Vector<String> true_;
@@ -106,7 +122,19 @@ namespace lambda
     Vector<String> put_;
     Vector<String> into_;
     Vector<String> is_;
+    Vector<String> says_;
     Vector<String> cout_;
     Vector<String> cin_;
+    Vector<String> if_;
+    Vector<String> else_;
+    Vector<String> while_;
+    Vector<String> until_;
+    Vector<String> greater_;
+    Vector<String> less_;
+    Vector<String> greater_equal_;
+    Vector<String> less_equal_;
+    Vector<String> takes_;
+    Vector<String> taking_;
+    Vector<String> give_;
   };
 }

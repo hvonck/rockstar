@@ -4,21 +4,26 @@
 
 namespace lambda
 {
-  Song::Song(const String& name, const String& artist, const Vector<TypeContainer*>& notes, const Vector<ActionContainer>& chords) :
-    name_(name), artist_(artist), notes_(notes), chords_(chords)
+  void Couplette::play()
+  {
+    for (ActionContainer* chord : chords)
+    {
+      chord->asIAction()->play();
+    }
+  }
+
+  Song::Song(const String& name, const String& artist, Couplette* couplettes) :
+    name_(name), artist_(artist), couplettes_(couplettes)
   {
   }
   void Song::play()
   {
     std::cout << "playing:\t" << name_ << "\nby:\t\t" << artist_ << "\n\n";
-    for (auto chord : chords_)
-    {
-      chord.asIAction()->play();
-    }
+    getCouplette("main")->play();
   }
   void Song::output() const
   {
-    for (auto note : notes_)
+    for (auto note : getCouplette("main")->notes)
     {
       std::cout << note->getName() << ": ";
       switch (note->getType())
@@ -36,7 +41,7 @@ namespace lambda
   }
   TypeContainer* Song::getNote(const String& name) const
   {
-    for (TypeContainer* note : notes_)
+    for (TypeContainer* note : getCouplette("main")->notes)
     {
       if (rockEqual(note->getName(), name))
       {
@@ -48,10 +53,38 @@ namespace lambda
   }
   const Vector<TypeContainer*>& Song::getNotes() const
   {
-    return notes_;
+    return getCouplette("main")->notes;
   }
-  const Vector<ActionContainer>& Song::getChords() const
+  Couplette* Song::getCouplette(const String& name) const
   {
-    return chords_;
+    if (rockEqual(name, couplettes_->name))
+    {
+      return couplettes_;
+    }
+    else
+    {
+      return getCouplette(couplettes_, name);
+    }
+  }
+  Couplette* Song::getCouplette(Couplette* c, const String & name) const
+  {
+    for (Couplette* couplette : c->children)
+    {
+      if (rockEqual(couplette->name, name))
+      {
+        return couplette;
+      }
+    }
+
+    for (Couplette* couplette : c->children)
+    {
+      Couplette* cc = getCouplette(couplette, name);
+      if (cc != nullptr)
+      {
+        return cc;
+      }
+    }
+
+    return nullptr;
   }
 }
