@@ -58,6 +58,7 @@ namespace lambda
     Vector<String> lineToWords(const String& line);
     void lineToActions(const String& line);
 
+    void createBlocker(Couplette* couplette, const String& line, bool invert_equal);
     void ifStatement(Couplette* couplette, const Vector<String>& line);
     void ifStatement(const Vector<String>& line);
     void elseStatement(const Vector<String>& line);

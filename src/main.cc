@@ -1,6 +1,6 @@
 #include "composer.h"
 
-#define ROCK_OLD_EXAMPLE
+//#define ROCK_OLD_EXAMPLE
 
 int main(int argc, char** argv)
 {
@@ -13,7 +13,6 @@ while tommy is as weak as timmy
 build tommy up
 if tommy is not timmy
 say tommy
-
 else if tommy is timmy
 shout "they are equal!"
 

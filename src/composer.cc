@@ -247,9 +247,11 @@ namespace lambda
     }
     else // All other commands should be based on the first found word. Not first found type.
     {
-      for (const String& word : lower)
+      for (size_t i = 0u; i < lower.size(); ++i)
       {
-        if (rockEqual(word, plus_) || rockEqual(word, minus_) || rockEqual(word, multiply_) || rockEqual(word, divide_))
+        const String& word = lower.at(i);
+
+        if (i != 0u && i != lower.size() - 1u && (rockEqual(word, plus_) || rockEqual(word, minus_) || rockEqual(word, multiply_) || rockEqual(word, divide_)))
         {
           arithmetic(current_couplette_, words);
           break;
@@ -302,6 +304,123 @@ namespace lambda
     return Song(generateSongName(total_size), generateArtistName(total_size), root);
   }
 
+  void Composer::createBlocker(Couplette* couplette, const String& line, bool invert_equal)
+  {
+    enum
+    {
+      kEqual,
+      kNotEqual,
+      kGreater,
+      kLess,
+      kGreaterEqual,
+      kLessEqual
+    } type = invert_equal ? kNotEqual : kEqual;
+
+    Vector<String> words = rockSplit(line, ' ');
+    size_t idx = 0u;
+    for (idx = 0u; idx < words.size(); ++idx)
+    {
+      if (rockEqual(words.at(idx), is_))
+      {
+        break;
+      }
+      else if (rockEqual(words.at(idx), "ain't"))
+      {
+        type = kNotEqual;
+        break;
+      }
+    }
+
+    String lhs = rockToString(words, 0u, idx);
+    String rhs = rockToString(words, idx + 1u);
+
+
+    if (rockEqual(words.at(idx + 1u), "not"))
+    {
+      if (type == kNotEqual)
+      {
+        type = kEqual;
+      }
+      else
+      {
+        type = kNotEqual;
+      }
+      rhs = rockToString(words, idx + 2u);
+    }
+    else if (rockEqual(words.at(idx + 1u), greater_))
+    {
+      type = kGreater;
+      rhs = rockToString(words, idx + 3u);
+    }
+    else if (rockEqual(words.at(idx + 1u), less_))
+    {
+      type = kLess;
+      rhs = rockToString(words, idx + 3u);
+    }
+    else if (rockEqual(words.at(idx + 1u), "as"))
+    {
+      if (rockEqual(words.at(idx + 2u), greater_equal_))
+      {
+        type = kGreaterEqual;
+        rhs = rockToString(words, idx + 4u);
+      }
+      else if (rockEqual(words.at(idx + 2u), less_equal_))
+      {
+        type = kLessEqual;
+        rhs = rockToString(words, idx + 4u);
+      }
+    }
+
+    TypeContainer* lhs_type = subExecute(current_couplette_, lhs);
+    TypeContainer* rhs_type = subExecute(current_couplette_, rhs);
+
+
+    float f;
+    if (rockIsFloat(lhs, &f))
+    {
+      lhs_type = newTemporary(current_couplette_);
+      lhs_type->construct(rockConstruct<NumberType>());
+      lhs_type->asNumber()->set(f);
+    }
+    if (rockIsFloat(rhs, &f))
+    {
+      rhs_type = newTemporary(current_couplette_);
+      rhs_type->construct(rockConstruct<NumberType>());
+      rhs_type->asNumber()->set(f);
+    }
+
+    if (lhs_type == nullptr) lhs_type = getType(current_couplette_, lhs);
+    if (rhs_type == nullptr) rhs_type = getType(current_couplette_, rhs);
+
+    BlockerContainer* blocker = rockConstruct<BlockerContainer>();
+
+    switch (type)
+    {
+    case kEqual:
+      blocker->construct(rockConstruct<EqualBlocker>());
+      break;
+    case kNotEqual:
+      blocker->construct(rockConstruct<NotEqualBlocker>());
+      break;
+    case kGreater:
+      blocker->construct(rockConstruct<GreaterThanBlocker>());
+      break;
+    case kLess:
+      blocker->construct(rockConstruct<LessThanBlocker>());
+      break;
+    case kGreaterEqual:
+      blocker->construct(rockConstruct<GreaterThanOrEqualToBlocker>());
+      break;
+    case kLessEqual:
+      blocker->construct(rockConstruct<LessThanOrEqualToBlocker>());
+      break;
+    }
+
+    blocker->asIBlocker()->setLhs(lhs_type);
+    blocker->asIBlocker()->setRhs(rhs_type);
+    couplette->blockers.push_back(blocker);
+  }
+
   void Composer::ifStatement(Couplette* couplette, const Vector<String>& line)
   {
     Vector<String> segments = line;
@@ -311,119 +430,7 @@ namespace lambda
     
     for (const String& segment : segments)
     {
-      enum
-      {
-        kEqual,
-        kNotEqual,
-        kGreater,
-        kLess,
-        kGreaterEqual,
-        kLessEqual
-      } type = kEqual;
-
-      Vector<String> words = rockSplit(segment, ' ');
-      size_t idx = 0u;
-      for (idx = 0u; idx < words.size(); ++idx)
-      {
-        if (rockEqual(words.at(idx), is_))
-        {
-          break;
-        }
-        else if (rockEqual(words.at(idx), "ain't"))
-        {
-          type = kNotEqual;
-          break;
-        }
-      }
-
-      String lhs = rockToString(words, 0u, idx);
-      String rhs = rockToString(words, idx + 1u);
-
-
-      if (rockEqual(words.at(idx + 1u), "not"))
-      {
-        if (type == kNotEqual)
-        {
-          type = kEqual;
-        }
-        else
-        {
-          type = kNotEqual;
-        }
-        rhs = rockToString(words, idx + 2u);
-      }
-      else if (rockEqual(words.at(idx + 1u), greater_))
-      {
-        type = kGreater;
-        rhs = rockToString(words, idx + 3u);
-      }
-      else if (rockEqual(words.at(idx + 1u), less_))
-      {
-        type = kLess;
-        rhs = rockToString(words, idx + 3u);
-      }
-      else if (rockEqual(words.at(idx + 1u), "as"))
-      {
-        if (rockEqual(words.at(idx + 2u), greater_equal_))
-        {
-          type = kGreaterEqual;
-          rhs = rockToString(words, idx + 4u);
-        }
-        else if (rockEqual(words.at(idx + 2u), less_equal_))
-        {
-          type = kLessEqual;
-          rhs = rockToString(words, idx + 4u);
-        }
-      }
-
-      TypeContainer* lhs_type = subExecute(current_couplette_, lhs);
-      TypeContainer* rhs_type = subExecute(current_couplette_, rhs);
-
-
-      float f;
-      if (rockIsFloat(lhs, &f))
-      {
-        lhs_type = newTemporary(current_couplette_);
-        lhs_type->construct(rockConstruct<NumberType>());
-        lhs_type->asNumber()->set(f);
-      }
-      if (rockIsFloat(rhs, &f))
-      {
-        rhs_type = newTemporary(current_couplette_);
-        rhs_type->construct(rockConstruct<NumberType>());
-        rhs_type->asNumber()->set(f);
-      }
-
-      if (lhs_type == nullptr) lhs_type = getType(current_couplette_, lhs);
-      if (rhs_type == nullptr) rhs_type = getType(current_couplette_, rhs);
-
-      BlockerContainer* blocker = rockConstruct<BlockerContainer>();
-
-      switch (type)
-      {
-      case kEqual:
-        blocker->construct(rockConstruct<EqualBlocker>());
-        break;
-      case kNotEqual:
-        blocker->construct(rockConstruct<NotEqualBlocker>());
-        break;
-      case kGreater:
-        blocker->construct(rockConstruct<GreaterThanBlocker>());
-        break;
-      case kLess:
-        blocker->construct(rockConstruct<LessThanBlocker>());
-        break;
-      case kGreaterEqual:
-        blocker->construct(rockConstruct<GreaterThanOrEqualToBlocker>());
-        break;
-      case kLessEqual:
-        blocker->construct(rockConstruct<LessThanOrEqualToBlocker>());
-        break;
-      }
-      
-      blocker->asIBlocker()->setLhs(lhs_type);
-      blocker->asIBlocker()->setRhs(rhs_type);
-      couplette->blockers.push_back(blocker);
+      createBlocker(couplette, segment, false);
     }
   }
 
@@ -451,6 +458,8 @@ namespace lambda
 
   void Composer::elseStatement(const Vector<String>& line)
   {
+    lineToActions("");
+
     if (line.size() >= 2u && line.at(1u) == "if")
     {
       // Create blocker.
@@ -539,24 +548,15 @@ namespace lambda
     couplette->parent = current_couplette_;
     current_couplette_->children.push_back(couplette);
 
-    size_t idx = 0u;
-    for (idx = 0u; idx < line.size(); ++idx)
+    Vector<String> lline = line;
+    lline.erase(lline.begin());
+
+    Vector<String> segments = rockSplit(lline, "and");
+
+    for (const String& segment : segments)
     {
-      if (rockEqual(line.at(idx), is_))
-      {
-        break;
-      }
+      createBlocker(couplette, segment, true);
     }
-
-    String name  = rockToString(line, 1u, idx);
-    String value = rockToString(line, idx + 1u);
-
-    BlockerContainer* blocker = rockConstruct<BlockerContainer>();
-    blocker->construct(rockConstruct<NotEqualBlocker>());
-    blocker->asIBlocker()->setLhs(getType(couplette, name));
-    blocker->asIBlocker()->setRhs(getType(couplette, value));
-
-    couplette->blockers.push_back(blocker);
 
     ActionContainer* action = newAction(current_couplette_);
     action->construct(rockConstruct<CoupletteAction>());
@@ -611,7 +611,7 @@ namespace lambda
 
     Couplette* couplette = newCouplette(name);
     couplette->parent = getRoot();
-    current_couplette_->children.push_back(couplette);
+    couplette->parent->children.push_back(couplette);
 
     for (size_t i = 0u; i < inputs.size(); ++i)
     {
